@@ -4,11 +4,7 @@ const authorize = require("../../middlewares/authorize");
 const roleCheck = require("../../middlewares/roleCheck");
 const router = express.Router();
 
-// Front-end Side
-router.get("/login", controllers.web.loginController.showLoginPage);
-router.get("/dashboard", controllers.web.dashboardController.showDashboardPage);
-
-//
+// Role check
 router.get("/api/v1/whoami", authorize, roleCheck(["member", "admin"]), (req, res) => {
   res.status(200).json(req.user);
 });

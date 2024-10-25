@@ -1,4 +1,3 @@
-const e = require("express");
 const userService = require("../../../services/userService");
 
 async function getAllUser(req, res) {
