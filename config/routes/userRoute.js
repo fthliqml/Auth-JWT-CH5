@@ -10,7 +10,7 @@ router.get("/api/v1/whoami", authorize, roleCheck(["member", "admin"]), (req, re
 });
 
 // API
-router.post("/api/v1/login", controllers.api.v1.authController.login);
+router.post("/api/v1/login", controllers.api.v1.userAuthController.login);
 router.post("/api/v1/register", controllers.api.v1.userController.createUser);
 
 router.get("/api/v1/users", controllers.api.v1.userController.getAllUser);

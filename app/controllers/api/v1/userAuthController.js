@@ -1,5 +1,5 @@
 const userService = require("../../../services/userService");
-const authService = require("../../../services/authService");
+const userAuthService = require("../../../services/userAuthService");
 
 async function login(req, res, next) {
   const { email, password } = req.body;
@@ -20,7 +20,7 @@ async function login(req, res, next) {
       return next(error);
     }
 
-    const isPasswordCorrect = await authService.checkPassword(password, user.password);
+    const isPasswordCorrect = await userAuthService.checkPassword(password, user.password);
 
     if (!isPasswordCorrect) {
       const error = new Error("Wrong password !");
@@ -29,7 +29,7 @@ async function login(req, res, next) {
       return next(error);
     }
 
-    const token = authService.createToken(user);
+    const token = userAuthService.createToken(user);
     req.session.accessToken = token;
 
     // Set access token ke cookie
