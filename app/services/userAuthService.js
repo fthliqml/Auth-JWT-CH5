@@ -1,5 +1,22 @@
+const userAuthRepository = require("../repositories/userAuthRepository");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+function getAll() {
+  return userAuthRepository.getAll();
+}
+
+const getDetail = (id) => {
+  return userAuthRepository.getDetail(id);
+};
+
+const getByEmail = (email) => {
+  return userAuthRepository.getByEmail(email);
+};
+
+const createUserAuth = async (newUserAuth) => {
+  return userAuthRepository.createUserAuth(newUserAuth);
+};
 
 function encrpytPassword(password) {
   return new Promise((resolve, reject) => {
@@ -38,4 +55,12 @@ function createToken(user) {
   return jwt.sign(payload, process.env.JWT_PRIVATEKEY, { expiresIn: "1m" });
 }
 
-module.exports = { encrpytPassword, checkPassword, createToken };
+module.exports = {
+  getAll,
+  getDetail,
+  createUserAuth,
+  getByEmail,
+  encrpytPassword,
+  checkPassword,
+  createToken,
+};

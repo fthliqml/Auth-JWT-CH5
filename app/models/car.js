@@ -9,11 +9,29 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
+      // Asosiasi dengan User untuk 'createdBy'
       Car.belongsTo(models.User, {
-        foreignKey: "UserId",
-        as: "user",
-        onDelete: "SET NULL", // Default
-        onUpdate: "CASCADE", // Default
+        foreignKey: "createdBy",
+        as: "createdBy",
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      });
+
+      // Asosiasi dengan User untuk 'updatedBy'
+      Car.belongsTo(models.User, {
+        foreignKey: "updatedBy",
+        as: "updatedBy",
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      });
+
+      // Asosiasi dengan User untuk 'deletedBy'
+      Car.belongsTo(models.User, {
+        foreignKey: "deletedBy",
+        as: "deletedBy",
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       });
     }
   }

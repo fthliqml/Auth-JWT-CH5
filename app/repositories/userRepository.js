@@ -12,13 +12,8 @@ const createUser = (newUser) => {
   return User.create(newUser);
 };
 
-const getByEmail = (email) => {
-  return User.findOne({ where: { email } });
-};
-
 module.exports = {
   getAll,
   getDetail,
   createUser,
-  getByEmail,
 };
