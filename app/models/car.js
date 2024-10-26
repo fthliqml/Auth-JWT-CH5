@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'createdBy'
       Car.belongsTo(models.User, {
         foreignKey: "createdBy",
-        as: "createdBy",
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       });
@@ -21,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'updatedBy'
       Car.belongsTo(models.User, {
         foreignKey: "updatedBy",
-        as: "updatedBy",
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       });
@@ -29,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'deletedBy'
       Car.belongsTo(models.User, {
         foreignKey: "deletedBy",
-        as: "deletedBy",
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       });
