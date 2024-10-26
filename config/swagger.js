@@ -10,6 +10,35 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API documentation",
     },
+    components: {
+      schemas: {
+        User: {
+          type: "object", // Indicates type data of User per item
+          properties: {
+            id: {
+              type: "integer",
+              example: 1,
+            },
+            name: {
+              type: "string",
+              example: "Kairi Reyosdelsol",
+            },
+            role: {
+              type: "string",
+              example: "Member",
+            },
+            createdAt: {
+              type: "datetime",
+              example: "2024-10-25T21:07:38.601Z",
+            },
+            updatedAt: {
+              type: "datetime",
+              example: "2024-10-25T21:07:38.601Z",
+            },
+          },
+        },
+      },
+    },
     tags: [
       {
         name: "User",
@@ -26,7 +55,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./api-docs/*.js"],
+  apis: ["./api-docs/*.yaml"],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

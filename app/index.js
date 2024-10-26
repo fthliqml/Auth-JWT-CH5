@@ -4,7 +4,6 @@ const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const router = require("../config/routes");
 const session = require("express-session");
-const { swaggerDocs, swaggerUI } = require("../config/swagger");
 
 const app = express();
 
@@ -37,8 +36,6 @@ app.use(
     },
   })
 );
-// API documentation
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 // Routing
 app.use(router);
 

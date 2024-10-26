@@ -1,0 +1,15 @@
+paths:
+  /api/v1/users:
+    get:
+      tags:
+        - User
+      summary: Get all user data
+      responses:
+        200:
+          description: Succesfully get users data
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/User" # Items will represented type object per item as the defition in components
