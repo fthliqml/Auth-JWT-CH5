@@ -1,6 +1,4 @@
 const userRepository = require("../repositories/userRepository");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 function getAll() {
   return userRepository.getAll();

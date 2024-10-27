@@ -18,23 +18,23 @@ const createUserAuth = async (newUserAuth) => {
   return userAuthRepository.createUserAuth(newUserAuth);
 };
 
-function encrpytPassword(password) {
+function encryptPassword(password) {
   return new Promise((resolve, reject) => {
     const salt = 10;
-    bcrypt.hash(password, salt, (err, encrpytedPassword) => {
-      if (!!err) {
+    bcrypt.hash(password, salt, (err, encryptedPassword) => {
+      if (err) {
         reject(err);
         return;
       }
-      resolve(encrpytedPassword);
+      resolve(encryptedPassword);
     });
   });
 }
 
-function checkPassword(password, encrpytedPassword) {
+function checkPassword(password, encryptedPassword) {
   return new Promise((resolve, reject) => {
-    bcrypt.compare(password, encrpytedPassword, (err, isPasswordCorrect) => {
-      if (!!err) {
+    bcrypt.compare(password, encryptedPassword, (err, isPasswordCorrect) => {
+      if (err) {
         reject(err);
         return;
       }
@@ -60,7 +60,7 @@ module.exports = {
   getDetail,
   createUserAuth,
   getByEmail,
-  encrpytPassword,
+  encryptPassword,
   checkPassword,
   createToken,
 };

@@ -1,7 +1,7 @@
 const userService = require("../../../services/userService");
 const userAuthService = require("../../../services/userAuthService");
 
-async function getAllUser(req, res) {
+async function getAllUser(req, res, next) {
   try {
     const users = await userService.getAll();
     res.status(200).json({
@@ -11,7 +11,7 @@ async function getAllUser(req, res) {
       data: { users },
     });
   } catch (error) {
-    // Server can't prosessing a request
+    // Server can't processing a request
     error.statusCode = 422;
     next(error);
   }
@@ -35,7 +35,7 @@ async function getDetail(req, res, next) {
       data: { user },
     });
   } catch (error) {
-    // Server can't prosessing a request
+    // Server can't processing a request
     error.statusCode = 422;
     next(error);
   }
@@ -44,7 +44,6 @@ async function getDetail(req, res, next) {
 async function createUser(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
-
     if (!name || !email || !password || !role) {
       const error = new Error("All fields (name, email, password, role) must be provided.");
       // Bad request
@@ -64,7 +63,7 @@ async function createUser(req, res, next) {
     const user = await userService.createUser(newUser);
 
     const newUserAuth = { userId: user.id, email, password };
-    newUserAuth.password = await userAuthService.encrpytPassword(newUserAuth.password);
+    newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
     const userAuth = await userAuthService.createUserAuth(newUserAuth);
 
     /* 
@@ -77,7 +76,7 @@ async function createUser(req, res, next) {
       const user = await userService.createUser(newUser, { transaction: t });
       
       const newUserAuth = { userId: user.id, email, password };
-      newUserAuth.password = await userAuthService.encrpytPassword(newUserAuth.password);
+      newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
       const userAuth = await userAuthService.createUserAuth(newUserAuth, { transaction: t });
       
       return {

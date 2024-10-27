@@ -1,5 +1,5 @@
 const swaggerUI = require("swagger-ui-express"); // Make UI for API documentation
-const swaggerJsDoc = require("swagger-jsdoc"); // Simplify make new API documentation by anonation
+const swaggerJsDoc = require("swagger-jsdoc"); // Simplify make new API documentation by annotation
 
 // swagger setup
 const swaggerOptions = {
