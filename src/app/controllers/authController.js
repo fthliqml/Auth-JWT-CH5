@@ -48,7 +48,7 @@ async function login(req, res, next) {
 async function userRegister(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       const error = new ApiError("All fields (name, email, password, role) must be provided.", 400);
       // Bad request
       return next(error);
@@ -84,6 +84,7 @@ async function userRegister(req, res, next) {
           id: user.id,
           name: user.name,
           role: user.role,
+          status: user.status,
           email: userAuth.email,
           password: userAuth.password,
           createdAt: user.createdAt,
