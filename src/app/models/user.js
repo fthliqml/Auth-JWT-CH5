@@ -50,9 +50,9 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
       /**
        * Active soft delete
-       * Automatically create column 'deletedAt' on table
+       * Automatically create column 'deletedAt' on db table
        */
-      // paranoid: true,
+      paranoid: true,
     }
   );
   return User;

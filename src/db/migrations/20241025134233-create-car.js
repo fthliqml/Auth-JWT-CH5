@@ -64,6 +64,7 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       deletedAt: {
+        // automatically filled by paranoid
         type: Sequelize.DATE,
       },
     });

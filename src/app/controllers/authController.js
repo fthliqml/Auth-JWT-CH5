@@ -7,25 +7,22 @@ async function login(req, res, next) {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      const error = new ApiError("Email & password must be provided !", 400);
       // Bad request
-      return next(error);
+      throw new ApiError("Email & password must be provided !", 400);
     }
 
     const user = await userService.getByEmail(email);
 
     if (!user) {
-      const error = new ApiError("Email not found !", 404);
       // Resource not found
-      return next(error);
+      throw new ApiError("Email not found !", 404);
     }
 
     const isPasswordCorrect = await userAuthService.checkPassword(password, user.password);
 
     if (!isPasswordCorrect) {
-      const error = new ApiError("Wrong password !", 401);
       // indicates that a request was unsuccessful because the client did not provide valid authentication credential
-      return next(error);
+      throw new ApiError("Wrong password !", 401);
     }
 
     const token = userAuthService.createToken(user);
@@ -49,23 +46,20 @@ async function userRegister(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
     if (!name || !email || !password) {
-      const error = new ApiError("All fields (name, email, password, role) must be provided.", 400);
       // Bad request
-      return next(error);
+      throw new ApiError("All fields (name, email, password, role) must be provided.", 400);
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      const error = new ApiError("Invalid email format.", 400);
       // Bad request
-      return next(error);
+      throw new ApiError("Invalid email format.", 400);
     }
 
     const authIsExisting = await userAuthService.getByEmail(email);
     if (authIsExisting) {
-      const error = new ApiError("Email already in use.", 400);
       // Bad request
-      return next(error);
+      throw new ApiError("Email already in use.", 400);
     }
 
     const newUser = { name, role };
@@ -77,7 +71,7 @@ async function userRegister(req, res, next) {
 
     res.status(201).json({
       status: "Success",
-      message: "Success created new user",
+      message: "Success created new user data",
       isSuccess: true,
       data: {
         newUser: {
@@ -98,9 +92,8 @@ async function userRegister(req, res, next) {
       // Bad request (client)
       return next(new ApiError(errorMessage[0], 400));
     }
-
     // Go to error middleware (onError)
-    next(new ApiError(error.message, 500));
+    next(error);
   }
 }
 
@@ -114,8 +107,8 @@ async function getAllUserAuth(req, res, next) {
       data: { userAuth },
     });
   } catch (error) {
-    // Server can't processing a request
-    next(new ApiError(error.message, 500));
+    // Go to error middleware (onError)
+    next(error);
   }
 }
 

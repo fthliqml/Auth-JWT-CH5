@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           isIn: {
             args: [["small", "medium", "large"]],
-            msg: "Role must be either 'medium', 'small', or 'large'",
+            msg: "Size must be either 'medium', 'small', or 'large'",
           },
         },
       },
@@ -87,6 +87,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Car",
+      /* Automatically create deletedAt column (soft-delete) */
+      paranoid: true,
     }
   );
   return Car;

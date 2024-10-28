@@ -31,12 +31,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
+      deletedAt: {
+        // automatically filled by paranoid
+        type: Sequelize.DATE,
+      },
     });
-
-    /**
-     * TODO
-     * Tambahkan soft-delete (paranoid)
-     */
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Users");

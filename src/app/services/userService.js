@@ -1,19 +1,23 @@
 const userRepository = require("../repositories/userRepository");
 
-function getAll() {
-  return userRepository.getAll();
+function getAll(condition = {}) {
+  return userRepository.getAll(condition);
 }
 
-const getDetail = (id) => {
-  return userRepository.getDetail(id);
+const getOne = (condition = {}) => {
+  return userRepository.getOne(condition);
 };
 
-const createUser = async (newUser) => {
+const createUser = (newUser) => {
   return userRepository.createUser(newUser);
 };
 
-const deleteUser = (condition) => {
+const deleteUser = (condition = {}) => {
   return userRepository.deleteUser(condition);
 };
 
-module.exports = { getAll, getDetail, createUser, deleteUser };
+const updateUser = (updatedData, condition = {}) => {
+  return userRepository.updateUser(updatedData, condition);
+};
+
+module.exports = { getAll, getOne, createUser, deleteUser, updateUser };
