@@ -1,31 +1,29 @@
-const userService = require("../../../services/userService");
-const userAuthService = require("../../../services/userAuthService");
+const ApiError = require("../../utils/ApiErrorUtils");
+
+const { userService, userAuthService } = require("../services");
 
 async function login(req, res, next) {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
-      const error = new Error("Email & password must be provided !");
+      const error = new ApiError("Email & password must be provided !", 400);
       // Bad request
-      error.statusCode = 400;
       return next(error);
     }
 
     const user = await userService.getByEmail(email);
 
     if (!user) {
-      const error = new Error("Email not found !");
+      const error = new ApiError("Email not found !", 404);
       // Resource not found
-      error.statusCode = 404;
       return next(error);
     }
 
     const isPasswordCorrect = await userAuthService.checkPassword(password, user.password);
 
     if (!isPasswordCorrect) {
-      const error = new Error("Wrong password !");
+      const error = new ApiError("Wrong password !", 401);
       // indicates that a request was unsuccessful because the client did not provide valid authentication credential
-      error.statusCode = 401;
       return next(error);
     }
 

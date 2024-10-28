@@ -1,3 +1,5 @@
-const api = require("./api");
+const userController = require("./userController");
+const authController = require("./authController");
+const errorHandler = require("./errorHandler");
 
-module.exports = { api };
+module.exports = { userController, authController, errorHandler };

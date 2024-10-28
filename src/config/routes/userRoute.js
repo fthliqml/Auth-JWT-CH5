@@ -1,5 +1,5 @@
 const express = require("express");
-const controllers = require("../../app/controllers");
+const { userController, authController } = require("../../app/controllers");
 const authorize = require("../../middlewares/authorize");
 const roleCheck = require("../../middlewares/roleCheck");
 const router = express.Router();
@@ -10,10 +10,10 @@ router.get("/api/v1/whoami", authorize, roleCheck(["member", "admin"]), (req, re
 });
 
 // API
-router.post("/api/v1/login", controllers.api.v1.authController.login);
-router.post("/api/v1/register", controllers.api.v1.userController.createUser);
+router.post("/api/v1/login", authController.login);
+router.post("/api/v1/register", userController.createUser);
 
-router.get("/api/v1/users", controllers.api.v1.userController.getAllUser);
-router.get("/api/v1/users/:id", controllers.api.v1.userController.getDetail);
+router.get("/api/v1/users", userController.getAllUser);
+router.get("/api/v1/users/:id", userController.getDetail);
 
 module.exports = router;

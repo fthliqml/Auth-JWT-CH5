@@ -42,14 +42,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: {
-        allowNull: false,
         unique: true,
         type: DataTypes.STRING,
-        validate: {
-          notNull: {
-            msg: "Password can't be null !",
-          },
-        },
       },
       refreshToken: DataTypes.STRING,
     },

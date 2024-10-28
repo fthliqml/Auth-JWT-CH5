@@ -16,8 +16,8 @@ module.exports = {
           model: "Users",
           key: "id",
         },
-        onDelete: "CASCADE", // delete data if user with spesific id deleted
-        onUpdate: "CASCADE", // update data if user with spesific id updated
+        onDelete: "CASCADE", // delete data if user with specific id deleted
+        onUpdate: "CASCADE", // update data if user with specific id updated
       },
       email: {
         unique: true,
@@ -26,7 +26,6 @@ module.exports = {
       },
       password: {
         unique: true,
-        allowNull: false,
         type: Sequelize.STRING,
       },
       refreshToken: {

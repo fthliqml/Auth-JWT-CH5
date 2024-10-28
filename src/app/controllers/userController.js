@@ -1,5 +1,7 @@
-const userService = require("../../../services/userService");
-const userAuthService = require("../../../services/userAuthService");
+const { Sequelize } = require("../models");
+const ApiError = require("../../utils/ApiErrorUtils");
+
+const { userService, userAuthService } = require("../services");
 
 async function getAllUser(req, res, next) {
   try {
@@ -12,8 +14,7 @@ async function getAllUser(req, res, next) {
     });
   } catch (error) {
     // Server can't processing a request
-    error.statusCode = 422;
-    next(error);
+    next(new ApiError(error.message, 500));
   }
 }
 
@@ -22,9 +23,8 @@ async function getDetail(req, res, next) {
   try {
     const user = await userService.getDetail(id);
     if (!user) {
-      const error = new Error("Can't find user's spesific data");
+      const error = new ApiError("Can't find user's spesific data", 404);
       // Resource not found
-      error.statusCode = 404;
       return next(error);
     }
 
@@ -36,8 +36,7 @@ async function getDetail(req, res, next) {
     });
   } catch (error) {
     // Server can't processing a request
-    error.statusCode = 422;
-    next(error);
+    next(new ApiError(error.message, 422));
   }
 }
 
@@ -45,17 +44,22 @@ async function createUser(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
     if (!name || !email || !password || !role) {
-      const error = new Error("All fields (name, email, password, role) must be provided.");
+      const error = new ApiError("All fields (name, email, password, role) must be provided.", 400);
       // Bad request
-      error.statusCode = 400;
+      return next(error);
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      const error = new ApiError("Invalid email format.", 400);
+      // Bad request
       return next(error);
     }
 
     const authIsExisting = await userAuthService.getByEmail(email);
     if (authIsExisting) {
-      const error = new Error("Email already in use.");
+      const error = new ApiError("Email already in use.", 400);
       // Bad request
-      error.statusCode = 400;
       return next(error);
     }
 
@@ -65,31 +69,6 @@ async function createUser(req, res, next) {
     const newUserAuth = { userId: user.id, email, password };
     newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
     const userAuth = await userAuthService.createUserAuth(newUserAuth);
-
-    /* 
-    TRANSACTION
-    automatically throw error and rollback if there is an error during creating new data
-    minus: ID skipped when rollback
-
-    const newUser = await sequelize.transaction(async (t) => {
-      const newUser = { name, role };
-      const user = await userService.createUser(newUser, { transaction: t });
-      
-      const newUserAuth = { userId: user.id, email, password };
-      newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
-      const userAuth = await userAuthService.createUserAuth(newUserAuth, { transaction: t });
-      
-      return {
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        email: userAuth.email,
-        password: userAuth.password,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
-    });
-    */
 
     res.status(201).json({
       status: "Success",
@@ -108,8 +87,14 @@ async function createUser(req, res, next) {
       },
     });
   } catch (error) {
+    if (error instanceof Sequelize.ValidationError) {
+      const errorMessage = error.errors.map((err) => err.message);
+      // Bad request (client)
+      return next(new ApiError(errorMessage[0], 400));
+    }
+
     // Go to error middleware (onError)
-    next(error);
+    next(new ApiError(error.message, 500));
   }
 }
 

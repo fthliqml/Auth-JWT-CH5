@@ -1,4 +1,4 @@
-const { Sequelize } = require("../../models");
+const ApiError = require("../../utils/ApiErrorUtils");
 
 function onLost(req, res) {
   res.status(404).json({
@@ -10,19 +10,16 @@ function onLost(req, res) {
 function onError(error, req, res, next) {
   const statusCode = error.statusCode || 500;
 
-  if (error instanceof Sequelize.ValidationError) {
-    const errorMessage = error.errors.map((err) => err.message);
-    // Bad request (client)
-    return res.status(400).json({
+  if (error instanceof ApiError) {
+    return res.status(statusCode).json({
       status: "Failed",
-      message: errorMessage[0],
+      error: error.message,
       isSuccess: false,
       data: null,
     });
   }
 
-  // Internal server error
-  res.status(statusCode).json({
+  res.status(500).json({
     status: "Failed",
     error: error.message || "An unexpected error occured",
     isSuccess: false,
