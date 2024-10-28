@@ -12,4 +12,8 @@ const createUser = async (newUser) => {
   return userRepository.createUser(newUser);
 };
 
-module.exports = { getAll, getDetail, createUser };
+const deleteUser = (condition) => {
+  return userRepository.deleteUser(condition);
+};
+
+module.exports = { getAll, getDetail, createUser, deleteUser };

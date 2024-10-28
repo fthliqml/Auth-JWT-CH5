@@ -6,7 +6,7 @@ paths:
       summary: Get all user data
       responses:
         200:
-          description: Succesfully get users data
+          description: Successfully get users data
           content:
             application/json:
               schema:

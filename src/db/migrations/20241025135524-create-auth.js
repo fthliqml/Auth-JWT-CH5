@@ -16,8 +16,8 @@ module.exports = {
           model: "Users",
           key: "id",
         },
-        onDelete: "CASCADE", // delete data if user with specific id deleted
-        onUpdate: "CASCADE", // update data if user with specific id updated
+        onDelete: "CASCADE", // delete data if user with specific id deleted (Work)
+        onUpdate: "CASCADE", // update data if user with specific id updated (Work)
       },
       email: {
         unique: true,

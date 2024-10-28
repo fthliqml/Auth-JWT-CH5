@@ -26,9 +26,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-
       role: {
-        allowNull: false,
         type: DataTypes.ENUM("superadmin", "admin", "member"),
         validate: {
           isIn: {
@@ -37,10 +35,24 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      status: {
+        type: DataTypes.ENUM("active", "deleted"),
+        validate: {
+          isIn: {
+            args: [["active", "deleted"]],
+            msg: "Role must be either 'active' or 'deleted'",
+          },
+        },
+      },
     },
     {
       sequelize,
       modelName: "User",
+      /**
+       * Active soft delete
+       * Automatically create column 'deletedAt' on table
+       */
+      // paranoid: true,
     }
   );
   return User;

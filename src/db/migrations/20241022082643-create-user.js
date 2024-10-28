@@ -14,9 +14,12 @@ module.exports = {
         type: Sequelize.STRING,
       },
       role: {
-        allowNull: false,
         type: Sequelize.ENUM("superadmin", "admin", "member"),
         defaultValue: "member",
+      },
+      status: {
+        type: Sequelize.ENUM("active", "deleted"),
+        defaultValue: "active",
       },
       createdAt: {
         allowNull: false,
@@ -29,8 +32,16 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
+
+    /**
+     * TODO
+     * Tambahkan soft-delete (paranoid)
+     */
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Users");
+    // delete enum type
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_role";');
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_status";');
   },
 };

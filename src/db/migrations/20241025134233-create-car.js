@@ -26,7 +26,6 @@ module.exports = {
         type: Sequelize.ENUM("small, medium, large"),
       },
       createdBy: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",
@@ -36,7 +35,6 @@ module.exports = {
         onUpdate: "CASCADE",
       },
       updatedBy: {
-        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",
@@ -72,5 +70,6 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Cars");
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Cars_size";');
   },
 };

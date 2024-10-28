@@ -9,11 +9,13 @@ router.get("/api/v1/whoami", authorize, roleCheck(["member", "admin"]), (req, re
   res.status(200).json(req.user);
 });
 
-// API
+// Auth
 router.post("/api/v1/login", authController.login);
-router.post("/api/v1/register", userController.createUser);
+router.post("/api/v1/register", authController.userRegister);
+router.get("/api/v1/auth", authController.getAllUserAuth);
 
 router.get("/api/v1/users", userController.getAllUser);
 router.get("/api/v1/users/:id", userController.getDetail);
+router.delete("/api/v1/users/:id", userController.deleteUser);
 
 module.exports = router;

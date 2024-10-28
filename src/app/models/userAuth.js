@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       UserAuth.belongsTo(models.User, {
         foreignKey: "userId",
         as: "user",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE", // Default
+        onDelete: "CASCADE", // does not work, is should define in migrations
+        onUpdate: "CASCADE", // does not work, is should define in migrations
       });
     }
   }

@@ -12,8 +12,13 @@ const createUser = (newUser) => {
   return User.create(newUser);
 };
 
+const deleteUser = (condition = {}) => {
+  return User.destroy(condition);
+};
+
 module.exports = {
   getAll,
   getDetail,
   createUser,
+  deleteUser,
 };

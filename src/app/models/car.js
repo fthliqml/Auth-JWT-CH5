@@ -13,22 +13,22 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'createdBy'
       Car.belongsTo(models.User, {
         foreignKey: "createdBy",
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+        onDelete: "SET NULL", // does not work, it should define in migrations
+        onUpdate: "CASCADE", // does not work, it should define in migrations
       });
 
       // Asosiasi dengan User untuk 'updatedBy'
       Car.belongsTo(models.User, {
         foreignKey: "updatedBy",
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+        onDelete: "SET NULL", // does not work, it should define in migrations
+        onUpdate: "CASCADE", // does not work, it should define in migrations
       });
 
       // Asosiasi dengan User untuk 'deletedBy'
       Car.belongsTo(models.User, {
         foreignKey: "deletedBy",
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
+        onDelete: "SET NULL", // does not work, it should define in migrations
+        onUpdate: "CASCADE", // does not work, it should define in migrations
       });
     }
   }
@@ -75,31 +75,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       createdBy: {
-        allowNull: false,
         type: DataTypes.INTEGER,
-        validate: {
-          notNull: {
-            msg: "'CreatedBy' field can't be null !",
-          },
-        },
       },
       updatedBy: {
-        allowNull: false,
         type: DataTypes.INTEGER,
-        validate: {
-          notNull: {
-            msg: "'UpdatedBy' field can't be null !",
-          },
-        },
       },
       deletedBy: {
-        allowNull: false,
         type: DataTypes.INTEGER,
-        validate: {
-          notNull: {
-            msg: "'DeletedBy' field can't be null !",
-          },
-        },
       },
     },
     {
