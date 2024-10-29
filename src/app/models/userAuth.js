@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: {
-        unique: true,
+        // unique: true,
         type: DataTypes.STRING,
       },
       refreshToken: DataTypes.STRING,

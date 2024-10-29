@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       password: {
-        unique: true,
+        // unique: true,
         type: Sequelize.STRING,
       },
       refreshToken: {

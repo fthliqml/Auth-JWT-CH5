@@ -23,9 +23,10 @@ module.exports = {
       },
       size: {
         allowNull: false,
-        type: Sequelize.ENUM("small, medium, large"),
+        type: Sequelize.ENUM("small", "medium", "large"),
       },
       createdBy: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",

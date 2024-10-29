@@ -75,7 +75,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       createdBy: {
+        allowNull: false,
         type: DataTypes.INTEGER,
+        validate: {
+          notNull: {
+            msg: "Size can't be null !",
+          },
+        },
       },
       updatedBy: {
         type: DataTypes.INTEGER,
