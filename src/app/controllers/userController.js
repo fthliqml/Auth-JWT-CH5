@@ -1,5 +1,3 @@
-const ApiError = require("../../utils/ApiErrorUtils");
-
 const { userService } = require("../services");
 
 async function getAllUser(req, res, next) {
@@ -26,10 +24,6 @@ async function getOneUser(req, res, next) {
   const id = req.params.id;
   try {
     const user = await userService.getOne({ where: { id } });
-    if (!user) {
-      // resource not found
-      throw new ApiError("Can't find user's spesific data", 404);
-    }
 
     res.status(200).json({
       status: "Success",
@@ -45,27 +39,15 @@ async function getOneUser(req, res, next) {
 async function deleteUser(req, res, next) {
   const id = req.params.id;
   try {
-    const user = await userService.getOne({ where: { id }, paranoid: false });
-    if (!user) {
-      // resource not found
-      throw new ApiError("User not found !", 404);
-    }
-
-    // updating status to deleted
-    await userService.updateUser({ status: "deleted" }, { where: { id } });
-
-    // soft-delete, because i'm using paranoid feature
-    await userService.deleteUser({ where: { id } });
-
-    // send update to respond
-    user.status = "deleted";
-    user.deletedAT = new Date();
+    // soft-delete, because i'm using paranoid feature (default paranoid: true)
+    const deletedUser = await userService.softDeleteUser({ where: { id } });
+    // const deletedUser = await userService.hardDeleteUser({ where: { id } });
 
     res.status(200).json({
       status: "Success",
       message: "Successfully deleted user data",
       isSuccess: true,
-      data: { user },
+      data: { deletedUser },
     });
   } catch (error) {
     next(error);
