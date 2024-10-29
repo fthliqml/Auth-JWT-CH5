@@ -17,7 +17,7 @@ async function login(req, res, next) {
     // Get user by email
     const userAuth = await userAuthService.getOne({
       where: { email },
-      attributes: ["email", "password"],
+      attributes: ["id", "email", "password"],
       include: {
         model: User,
         as: "user",
@@ -45,6 +45,12 @@ async function login(req, res, next) {
 
     // Create & save refresh token to database
     await userAuthService.createRefreshToken(payload, { where: { email } });
+
+    // Set cookie
+    res.cookie("userId", userAuth.id, {
+      maxAge: process.env.COOKIE_EXP,
+      httpOnly: true,
+    });
 
     apiSuccess(res, 200, "Authorized.", {
       user: payload,
@@ -107,8 +113,34 @@ async function getAllUserAuth(req, res, next) {
 
 async function generateAccessToken(req, res, next) {
   try {
+    const id = req.cookies.userId;
+    if (!id) {
+      // sesi over
+      throw new ApiError("Session is over, please login again.", 440);
+    }
+
+    const userAuth = await userAuthService.getOne({
+      where: { id },
+      attributes: ["id", "refreshToken"],
+      include: {
+        model: User,
+        as: "user",
+        attributes: ["id", "name", "role"],
+      },
+    });
+
+    const user = userAuth.user;
+
+    const payload = {
+      userId: user.id,
+      name: user.name,
+      role: user.role,
+    };
+
+    const token = userAuthService.createAccessToken(payload, userAuth.refreshToken);
+
     // response success
-    apiSuccess(res, 200, "Successfully get all user auth data", {});
+    apiSuccess(res, 200, "Successfully get new access token", { token });
   } catch (error) {
     // Go to error middleware (onError)
     next(error);

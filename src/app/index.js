@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const router = require("../config/routes");
@@ -21,6 +22,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 // Install Body Parser
 app.use(express.urlencoded({ extended: true }));
+// Install Cookie Parser
+app.use(cookieParser(process.env.COOKIE_KEY));
 // // Trust first proxy
 // app.set("trust proxy", 1);
 // // Set session options
