@@ -8,19 +8,16 @@ function getAll() {
   return userAuthRepository.getAll();
 }
 
-const getOne = async (condition) => {
-  const user = await userAuthRepository.getOne(condition);
-
-  if (!user) {
-    // resource not found
-    throw new ApiError("Can't find user's spesific data", 404);
-  }
-
-  return user;
+const getOne = (condition) => {
+  return userAuthRepository.getOne(condition);
 };
 
 const createUserAuth = async (newUserAuth) => {
   return userAuthRepository.createUserAuth(newUserAuth);
+};
+
+const updateUserAuth = async (updatedData, condition) => {
+  return userAuthRepository.updateUserAuth(updatedData, condition);
 };
 
 function encryptPassword(password) {
@@ -44,7 +41,7 @@ function checkPassword(password, encryptedPassword) {
         return;
       }
       // indicates that a request was unsuccessful because the client did not provide valid authentication credential
-      if (!isPasswordCorrect) reject(new ApiError("Wrong password !", 401));
+      if (!isPasswordCorrect) reject(new ApiError("Incorrect password !", 401));
 
       resolve(isPasswordCorrect);
     });
@@ -58,31 +55,37 @@ async function emailValidator(email) {
     throw new ApiError("Invalid email format.", 400);
   }
 
-  const authIsExisting = await getOne({ where: { email } });
+  const authIsExisting = await userAuthRepository.getOne({ where: { email } });
   if (authIsExisting) {
     // Bad request
     throw new ApiError("Email already in use.", 400);
   }
 }
 
-function createToken(user) {
-  const payload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
+function createAccessToken(payload) {
+  return jwt.sign(payload, process.env.JWT_PRIVATEKEY, {
+    expiresIn: process.env.JWT_ACCESSTOKEN_EXP,
+  });
+}
 
-  return jwt.sign(payload, process.env.JWT_PRIVATEKEY, { expiresIn: "1m" });
+async function createRefreshToken(payload, userCondition) {
+  const refreshToken = jwt.sign(payload, process.env.JWT_PRIVATEKEY, {
+    expiresIn: process.env.JWT_REFRESHTOKEN_EXP,
+  });
+
+  await updateUserAuth({ refreshToken }, userCondition);
+
+  return refreshToken;
 }
 
 module.exports = {
   getAll,
   createUserAuth,
+  updateUserAuth,
   getOne,
   encryptPassword,
   checkPassword,
   emailValidator,
-  createToken,
+  createAccessToken,
+  createRefreshToken,
 };

@@ -4,6 +4,8 @@ function onLost(req, res) {
   res.status(404).json({
     status: "Failed",
     message: "Route not found!",
+    isSuccess: false,
+    data: null,
   });
 }
 
@@ -21,7 +23,7 @@ function onError(error, req, res, next) {
 
   res.status(500).json({
     status: "Failed",
-    error: error.message || "An unexpected error occured",
+    error: error.message || "An unexpected error occurred",
     isSuccess: false,
     data: null,
   });

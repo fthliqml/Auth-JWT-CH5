@@ -2,6 +2,8 @@ const { Sequelize } = require("../models");
 const ApiError = require("../../utils/ApiErrorUtils");
 const apiSuccess = require("../../utils/apiSuccess");
 
+const { User } = require("../models");
+
 const { userService, userAuthService } = require("../services");
 
 async function login(req, res, next) {
@@ -12,21 +14,41 @@ async function login(req, res, next) {
       throw new ApiError("Email & password must be provided !", 400);
     }
 
-    const user = await userAuthService.getOne({ where: { email } });
-
-    await userAuthService.checkPassword(password, user.password);
-
-    const token = userAuthService.createToken(user);
-
-    // Set access token ke cookie
-    res.cookie("accessToken", token, {
-      httpOnly: true, // Hanya bisa diakses oleh server, tidak oleh JavaScript
-      secure: true, // Hanya kirim cookie melalui HTTPS
-      sameSite: "Strict", // Cegah pengiriman cookie ke domain lain
-      maxAge: 15 * 60 * 1000, // Cookie akan kadaluarsa sesuai dengan expiry token
+    // Get user by email
+    const userAuth = await userAuthService.getOne({
+      where: { email },
+      attributes: ["email", "password"],
+      include: {
+        model: User,
+        as: "user",
+        attributes: ["id", "name", "role"],
+      },
     });
 
-    res.redirect("/dashboard");
+    if (!userAuth) {
+      // Unauthorized
+      throw new ApiError("Email not registered !", 401);
+    }
+
+    const user = userAuth.user;
+
+    // Password validation
+    await userAuthService.checkPassword(password, userAuth.password);
+
+    // Token payload
+    const payload = {
+      userId: user.id,
+      name: user.name,
+      email: userAuth.email,
+      role: user.role,
+    };
+
+    // Create & save refresh token to database
+    await userAuthService.createRefreshToken(payload, { where: { email } });
+
+    apiSuccess(res, 200, "Authorized.", {
+      user: payload,
+    });
   } catch (error) {
     next(error);
   }
@@ -56,9 +78,9 @@ async function userRegister(req, res, next) {
       newUser: {
         id: user.id,
         name: user.name,
+        email: userAuth.email,
         role: user.role,
         status: user.status,
-        email: userAuth.email,
       },
     });
   } catch (error) {
@@ -75,7 +97,6 @@ async function userRegister(req, res, next) {
 async function getAllUserAuth(req, res, next) {
   try {
     const userAuth = await userAuthService.getAll();
-
     // response success
     apiSuccess(res, 200, "Successfully get all user auth data", { userAuth });
   } catch (error) {
@@ -84,4 +105,14 @@ async function getAllUserAuth(req, res, next) {
   }
 }
 
-module.exports = { login, userRegister, getAllUserAuth };
+async function generateAccessToken(req, res, next) {
+  try {
+    // response success
+    apiSuccess(res, 200, "Successfully get all user auth data", {});
+  } catch (error) {
+    // Go to error middleware (onError)
+    next(error);
+  }
+}
+
+module.exports = { login, userRegister, getAllUserAuth, generateAccessToken };
