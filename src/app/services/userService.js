@@ -6,11 +6,6 @@ function getAll(condition = {}) {
 }
 
 const getOne = async (condition) => {
-  if (!condition) {
-    // bad request
-    throw new ApiError("getOne function need condition params", 400);
-  }
-
   const user = await userRepository.getOne(condition);
 
   if (!user) {

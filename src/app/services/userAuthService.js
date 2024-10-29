@@ -2,12 +2,21 @@ const { userAuthRepository } = require("../repositories");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const ApiError = require("../../utils/ApiErrorUtils");
+
 function getAll() {
   return userAuthRepository.getAll();
 }
 
-const getOne = (condition) => {
-  return userAuthRepository.getOne(condition);
+const getOne = async (condition) => {
+  const user = await userAuthRepository.getOne(condition);
+
+  if (!user) {
+    // resource not found
+    throw new ApiError("Can't find user's spesific data", 404);
+  }
+
+  return user;
 };
 
 const createUserAuth = async (newUserAuth) => {
@@ -34,9 +43,26 @@ function checkPassword(password, encryptedPassword) {
         reject(err);
         return;
       }
+      // indicates that a request was unsuccessful because the client did not provide valid authentication credential
+      if (!isPasswordCorrect) reject(new ApiError("Wrong password !", 401));
+
       resolve(isPasswordCorrect);
     });
   });
+}
+
+async function emailValidator(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    // Bad request
+    throw new ApiError("Invalid email format.", 400);
+  }
+
+  const authIsExisting = await getOne({ where: { email } });
+  if (authIsExisting) {
+    // Bad request
+    throw new ApiError("Email already in use.", 400);
+  }
 }
 
 function createToken(user) {
@@ -57,5 +83,6 @@ module.exports = {
   getOne,
   encryptPassword,
   checkPassword,
+  emailValidator,
   createToken,
 };

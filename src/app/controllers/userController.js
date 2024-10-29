@@ -4,7 +4,7 @@ const apiSuccess = require("../../utils/apiSuccess");
 async function getAllUser(req, res, next) {
   const { active } = req.query;
   const userCondition = { paranoid: true };
-  // get deleted data too
+  // get deleted soft-data too
   if (active == "false") userCondition.paranoid = false;
 
   try {

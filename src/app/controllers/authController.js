@@ -12,22 +12,11 @@ async function login(req, res, next) {
       throw new ApiError("Email & password must be provided !", 400);
     }
 
-    const user = await userService.getOne({ where: { email } });
+    const user = await userAuthService.getOne({ where: { email } });
 
-    if (!user) {
-      // Resource not found
-      throw new ApiError("Email not found !", 404);
-    }
-
-    const isPasswordCorrect = await userAuthService.checkPassword(password, user.password);
-
-    if (!isPasswordCorrect) {
-      // indicates that a request was unsuccessful because the client did not provide valid authentication credential
-      throw new ApiError("Wrong password !", 401);
-    }
+    await userAuthService.checkPassword(password, user.password);
 
     const token = userAuthService.createToken(user);
-    req.session.accessToken = token;
 
     // Set access token ke cookie
     res.cookie("accessToken", token, {
@@ -51,21 +40,13 @@ async function userRegister(req, res, next) {
       throw new ApiError("All fields (name, email, password, role) must be provided.", 400);
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      // Bad request
-      throw new ApiError("Invalid email format.", 400);
-    }
+    // check email is valid & doesn't exist
+    await userAuthService.emailValidator(email);
 
-    const authIsExisting = await userAuthService.getOne({ where: { email } });
-    if (authIsExisting) {
-      // Bad request
-      throw new ApiError("Email already in use.", 400);
-    }
+    // create user
+    const user = await userService.createUser({ name, role });
 
-    const newUserInfo = { name, role };
-    const user = await userService.createUser(newUserInfo);
-
+    // create user auth
     const newUserAuth = { userId: user.id, email, password };
     newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
     const userAuth = await userAuthService.createUserAuth(newUserAuth);
