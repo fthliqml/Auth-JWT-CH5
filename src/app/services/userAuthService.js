@@ -6,12 +6,8 @@ function getAll() {
   return userAuthRepository.getAll();
 }
 
-const getDetail = (id) => {
-  return userAuthRepository.getDetail(id);
-};
-
-const getByEmail = (email) => {
-  return userAuthRepository.getByEmail(email);
+const getOne = (condition) => {
+  return userAuthRepository.getOne(condition);
 };
 
 const createUserAuth = async (newUserAuth) => {
@@ -57,9 +53,8 @@ function createToken(user) {
 
 module.exports = {
   getAll,
-  getDetail,
   createUserAuth,
-  getByEmail,
+  getOne,
   encryptPassword,
   checkPassword,
   createToken,

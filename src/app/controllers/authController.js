@@ -1,5 +1,6 @@
 const { Sequelize } = require("../models");
 const ApiError = require("../../utils/ApiErrorUtils");
+const apiSuccess = require("../../utils/apiSuccess");
 
 const { userService, userAuthService } = require("../services");
 
@@ -11,7 +12,7 @@ async function login(req, res, next) {
       throw new ApiError("Email & password must be provided !", 400);
     }
 
-    const user = await userService.getByEmail(email);
+    const user = await userService.getOne({ where: { email } });
 
     if (!user) {
       // Resource not found
@@ -56,34 +57,27 @@ async function userRegister(req, res, next) {
       throw new ApiError("Invalid email format.", 400);
     }
 
-    const authIsExisting = await userAuthService.getByEmail(email);
+    const authIsExisting = await userAuthService.getOne({ where: { email } });
     if (authIsExisting) {
       // Bad request
       throw new ApiError("Email already in use.", 400);
     }
 
-    const newUser = { name, role };
-    const user = await userService.createUser(newUser);
+    const newUserInfo = { name, role };
+    const user = await userService.createUser(newUserInfo);
 
     const newUserAuth = { userId: user.id, email, password };
     newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
     const userAuth = await userAuthService.createUserAuth(newUserAuth);
 
-    res.status(201).json({
-      status: "Success",
-      message: "Success created new user data",
-      isSuccess: true,
-      data: {
-        newUser: {
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          status: user.status,
-          email: userAuth.email,
-          password: userAuth.password,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        },
+    // response success
+    apiSuccess(res, 201, "Successfully registered.", {
+      newUser: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+        email: userAuth.email,
       },
     });
   } catch (error) {
@@ -100,12 +94,9 @@ async function userRegister(req, res, next) {
 async function getAllUserAuth(req, res, next) {
   try {
     const userAuth = await userAuthService.getAll();
-    res.status(200).json({
-      status: "Success",
-      message: "Success get all user",
-      isSuccess: true,
-      data: { userAuth },
-    });
+
+    // response success
+    apiSuccess(res, 200, "Successfully get all user auth data", { userAuth });
   } catch (error) {
     // Go to error middleware (onError)
     next(error);

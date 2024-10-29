@@ -4,21 +4,16 @@ const getAll = () => {
   return UserAuth.findAll();
 };
 
-const getDetail = (id) => {
-  return UserAuth.findByPk(id);
-};
-
 const createUserAuth = (newUserAuth) => {
   return UserAuth.create(newUserAuth);
 };
 
-const getByEmail = (email) => {
-  return UserAuth.findOne({ where: { email } });
+const getOne = (condition) => {
+  return UserAuth.findOne(condition);
 };
 
 module.exports = {
   getAll,
-  getDetail,
   createUserAuth,
-  getByEmail,
+  getOne,
 };

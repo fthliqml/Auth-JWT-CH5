@@ -12,6 +12,7 @@ const getOne = async (condition) => {
   }
 
   const user = await userRepository.getOne(condition);
+
   if (!user) {
     // resource not found
     throw new ApiError("Can't find user's spesific data", 404);
@@ -24,6 +25,7 @@ const createUser = (newUser) => {
 };
 
 const softDeleteUser = async (condition) => {
+  // check user is exist
   const user = await getOne(condition);
   if (!user) return;
 
@@ -37,15 +39,18 @@ const softDeleteUser = async (condition) => {
 };
 
 const hardDeleteUser = async (condition) => {
+  // check user is exist
   const user = await getOne({ where: condition.where, paranoid: false });
   if (!user) return;
 
+  // hard delete with force: true
   await userRepository.deleteUser({ where: condition.where, force: true });
 
   return user;
 };
 
 const updateUser = async (updatedData, condition = {}) => {
+  // check user is exist
   const user = await getOne(condition);
   if (!user) return;
 
