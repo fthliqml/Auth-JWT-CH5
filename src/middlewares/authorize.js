@@ -1,26 +1,27 @@
-const jwt = require("jsonwebtoken");
-const userService = require("../app/services/userService");
+const { userAuthService } = require("../app/services");
+const ApiError = require("../utils/ApiErrorUtils");
 
-async function authorize(req, res, next) {
+module.exports = async function authorize(req, res, next) {
   try {
     const bearerToken = req.headers.authorization;
+    if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
+      // Unauthorized
+      throw new ApiError("Token is missing or malformatted !", 401);
+    }
+
     const token = bearerToken.split("Bearer ")[1];
-    const tokenPayload = jwt.verify(token, process.env.JWT_PRIVATEKEY);
 
-    // Get user data
-    const user = await userService.getDetail(tokenPayload.id);
+    const userPayload = userAuthService.isValidToken(token);
 
-    req.user = user;
+    if (!userPayload) {
+      // Unauthorized
+      throw new ApiError("AccessToken is expired", 401);
+    }
+
+    req.user = userPayload;
 
     next();
   } catch (error) {
-    res.status(401).json({
-      status: "Failed",
-      error: "Unauthorized",
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
-}
-
-module.exports = authorize;
+};

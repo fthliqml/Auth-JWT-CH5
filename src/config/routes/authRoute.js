@@ -10,8 +10,11 @@ router.get("/whoami", authorize, roleCheck(["member", "admin"]), (req, res) => {
 });
 
 router.post("/auth/login", authController.login);
+router.post("/auth/logout", authController.logout);
 router.post("/auth/register", authController.userRegister);
-router.get("/auth", authController.getAllUserAuth);
 router.get("/auth/refresh-token", authController.generateAccessToken);
+
+// Admin
+router.get("/admin/auth", authorize, authController.getAllUserAuth);
 
 module.exports = router;

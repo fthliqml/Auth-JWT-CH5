@@ -37,24 +37,48 @@ async function login(req, res, next) {
 
     // Token payload
     const payload = {
-      userId: user.id,
-      name: user.name,
-      email: userAuth.email,
+      id: user.id,
+      // name: user.name,
+      // email: userAuth.email,
       role: user.role,
     };
 
     // Create & save refresh token to database
-    await userAuthService.createRefreshToken(payload, { where: { email } });
+    const refreshToken = await userAuthService.createRefreshToken(payload, { where: { email } });
 
-    // Set cookie
-    res.cookie("userId", userAuth.id, {
+    // Generate access token
+    const accessToken = userAuthService.createAccessToken(payload, refreshToken);
+
+    // Send accessToken to http only cookie
+    res.cookie("accessToken", accessToken, {
       maxAge: process.env.COOKIE_EXP,
       httpOnly: true,
     });
 
     apiSuccess(res, 200, "Authorized.", {
-      user: payload,
+      user: {
+        userId: user.id,
+        name: user.name,
+        email: userAuth.email,
+        role: user.role,
+      },
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function logout(req, res, next) {
+  const userInfo = userAuthService.getPayloadExpToken(req.cookies.accessToken);
+  try {
+    if (!userInfo) {
+      // unauthorized, cookies needed
+      throw new ApiError("You are not authorized. Please login", 401);
+    }
+    // set refresh token to null
+    await userAuthService.updateUserAuth({ refreshToken: null }, { where: { id: userInfo.id } });
+    res.clearCookie("accessToken");
+    apiSuccess(res, 200, "Successfully logout.", null);
   } catch (error) {
     next(error);
   }
@@ -81,7 +105,7 @@ async function userRegister(req, res, next) {
 
     // response success
     apiSuccess(res, 201, "Successfully registered.", {
-      newUser: {
+      User: {
         id: user.id,
         name: user.name,
         email: userAuth.email,
@@ -112,12 +136,15 @@ async function getAllUserAuth(req, res, next) {
 }
 
 async function generateAccessToken(req, res, next) {
+  // get payload from accessToken
+  const userInfo = userAuthService.getPayloadExpToken(req.cookies.accessToken);
   try {
-    const id = req.cookies.userId;
-    if (!id) {
-      // sesi over
-      throw new ApiError("Session is over, please login again.", 440);
+    if (!userInfo) {
+      // session over
+      throw new ApiError("Session is over, please login again.", 401);
     }
+
+    const id = userInfo.id;
 
     const userAuth = await userAuthService.getOne({
       where: { id },
@@ -129,15 +156,20 @@ async function generateAccessToken(req, res, next) {
       },
     });
 
+    if (!userAuthService.isValidToken(userAuth.refreshToken)) {
+      // session over
+      throw new ApiError("Token is expired, please login again.", 401);
+    }
+
     const user = userAuth.user;
 
     const payload = {
-      userId: user.id,
-      name: user.name,
+      id: user.id,
+      // name: user.name,
       role: user.role,
     };
 
-    const token = userAuthService.createAccessToken(payload, userAuth.refreshToken);
+    const token = userAuthService.createAccessToken(payload);
 
     // response success
     apiSuccess(res, 200, "Successfully get new access token", { token });
@@ -147,4 +179,4 @@ async function generateAccessToken(req, res, next) {
   }
 }
 
-module.exports = { login, userRegister, getAllUserAuth, generateAccessToken };
+module.exports = { login, logout, userRegister, getAllUserAuth, generateAccessToken };

@@ -62,12 +62,7 @@ async function emailValidator(email) {
   }
 }
 
-function createAccessToken(payload, refreshToken) {
-  if (!isValidToken(refreshToken)) {
-    // session over
-    throw new ApiError("Token is expired, please login again.", 440);
-  }
-
+function createAccessToken(payload) {
   return jwt.sign(payload, process.env.JWT_PRIVATEKEY, {
     expiresIn: process.env.JWT_ACCESSTOKEN_EXP,
   });
@@ -85,11 +80,15 @@ async function createRefreshToken(payload, userCondition) {
 
 function isValidToken(token) {
   try {
-    jwt.verify(token, process.env.JWT_PRIVATEKEY);
-    return true;
+    const tokenPayload = jwt.verify(token, process.env.JWT_PRIVATEKEY);
+    return tokenPayload;
   } catch (error) {
     return false;
   }
+}
+
+function getPayloadExpToken(token) {
+  return jwt.decode(token);
 }
 
 module.exports = {
@@ -102,4 +101,6 @@ module.exports = {
   emailValidator,
   createAccessToken,
   createRefreshToken,
+  isValidToken,
+  getPayloadExpToken,
 };

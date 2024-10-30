@@ -4,7 +4,8 @@ function roleCheck(roles) {
     if (roles.includes(user.role)) {
       return next();
     }
-    res.status(401).json({
+    // Forbidden access
+    res.status(403).json({
       status: "Failed",
       error: "Role is unauthorized !",
       isSuccess: false,
