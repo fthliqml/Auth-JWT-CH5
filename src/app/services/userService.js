@@ -5,8 +5,13 @@ function getAll(condition = {}) {
   return userRepository.getAll(condition);
 }
 
-const getOne = (condition) => {
-  return userRepository.getOne(condition);
+const getOne = async (condition) => {
+  const user = await userRepository.getOne(condition);
+  if (!user) {
+    // resource not found
+    throw new ApiError("Can't find user's specific data", 404);
+  }
+  return user;
 };
 
 const createUser = (newUser) => {
@@ -15,10 +20,8 @@ const createUser = (newUser) => {
 
 const softDeleteUser = async (condition) => {
   // check user is exist
-  const user = await getOne(condition);
-  if (!user) {
-    throw new ApiError("Can't find user's specific data", 404);
-  }
+  await getOne(condition);
+
   // updating status to deleted and get deletedUser data
   await updateUser({ status: "deleted" }, condition);
 
@@ -31,9 +34,7 @@ const softDeleteUser = async (condition) => {
 const hardDeleteUser = async (condition) => {
   // check user is exist
   const user = await getOne({ where: condition.where, paranoid: false });
-  if (!user) {
-    throw new ApiError("Can't find user's specific data", 404);
-  }
+
   // hard delete with force: true
   await userRepository.deleteUser({ where: condition.where, force: true });
 
@@ -42,10 +43,8 @@ const hardDeleteUser = async (condition) => {
 
 const updateUser = async (updatedData, condition = {}) => {
   // check user is exist
-  const user = await getOne(condition);
-  if (!user) {
-    throw new ApiError("Can't find user's specific data", 404);
-  }
+  await getOne(condition);
+
   // update user data
   await userRepository.updateUser(updatedData, condition);
 

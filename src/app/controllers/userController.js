@@ -1,12 +1,11 @@
 const { userService } = require("../services");
 const apiSuccess = require("../../utils/apiSuccess");
-const ApiError = require("../../utils/ApiErrorUtils");
 
 async function getAllUser(req, res, next) {
   const { active } = req.query;
   const userCondition = { paranoid: true };
-  // get deleted soft-data too
-  if (active == "false") userCondition.paranoid = false;
+
+  if (active == "false") userCondition.paranoid = false; // when paranoid = false -> get soft deleted data too
 
   try {
     const users = await userService.getAll(userCondition);
@@ -22,10 +21,6 @@ async function getOneUser(req, res, next) {
   const id = req.params.id;
   try {
     const user = await userService.getOne({ where: { id } });
-    if (!user) {
-      // resource not found
-      throw new ApiError("User not found.", 404);
-    }
 
     // response success
     apiSuccess(res, 200, "Successfully get user data", { user });
