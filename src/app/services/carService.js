@@ -24,18 +24,16 @@ const updateCar = async (updatedData, condition) => {
   return getOne(condition);
 };
 
-const softDelete = async (condition) => {
+const softDelete = async (condition, deletedBy) => {
   // check existing user
-  const user = await getOne(condition);
-  if (!user) {
-    // resource not found
-    throw new ApiError("Can't find user's specific data", 404);
-  }
+  await getOne(condition);
 
+  await carRepository.updateCar({ deletedBy }, condition);
   // automatically update 'deleteAt' field because using paranoid
   await carRepository.deleteCar(condition);
 
-  return user;
+  // return deleted data
+  return getOne({ where: condition.where, paranoid: false });
 };
 
 module.exports = { getAll, getOne, createCar, updateCar, softDelete };

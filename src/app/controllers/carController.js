@@ -66,4 +66,23 @@ async function updateCarData(req, res, next) {
   }
 }
 
-module.exports = { getAllCar, createNewCar, updateCarData };
+async function deleteCarData(req, res, next) {
+  const id = req.params.id;
+  const userId = req.user.id;
+  try {
+    const deletedCar = await carService.softDelete(
+      {
+        where: {
+          id,
+        },
+      },
+      userId // deletedBy
+    );
+
+    apiSuccess(res, 200, "Successfully deleted car data", { deletedCar });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { getAllCar, createNewCar, updateCarData, deleteCarData };

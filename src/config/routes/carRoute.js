@@ -13,5 +13,11 @@ router.patch(
   roleCheck(["superadmin", "admin"]),
   carController.updateCarData
 );
+router.delete(
+  "/cars/:id",
+  authorize,
+  roleCheck(["superadmin", "admin"]),
+  carController.deleteCarData
+);
 
 module.exports = router;
