@@ -17,18 +17,6 @@ async function getAllUser(req, res, next) {
   }
 }
 
-async function getOneUser(req, res, next) {
-  const id = req.params.id;
-  try {
-    const user = await userService.getOne({ where: { id } });
-
-    // response success
-    apiSuccess(res, 200, "Successfully get user data", { user });
-  } catch (error) {
-    next(error);
-  }
-}
-
 async function deleteUser(req, res, next) {
   const id = req.params.id;
   try {
@@ -42,4 +30,4 @@ async function deleteUser(req, res, next) {
   }
 }
 
-module.exports = { getAllUser, getOneUser, deleteUser };
+module.exports = { getAllUser, deleteUser };

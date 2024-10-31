@@ -20,7 +20,12 @@ const createUser = (newUser) => {
 
 const softDeleteUser = async (condition) => {
   // check user is exist
-  await getOne(condition);
+  const user = await getOne(condition);
+
+  if (user.role == "superadmin") {
+    // Forbidden
+    throw new ApiError("Can't delete superadmin.", 403);
+  }
 
   // updating status to deleted and get deletedUser data
   await updateUser({ status: "deleted" }, condition);
