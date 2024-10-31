@@ -85,18 +85,30 @@ async function logout(req, res, next) {
 }
 
 async function userRegister(req, res, next) {
+  const { name, email, password, role } = req.body;
   try {
-    const { name, email, password, role } = req.body;
+    const id = req.user;
+    const roleCheck = id ? role : undefined;
+
     if (!name || !email || !password) {
       // Bad request
       throw new ApiError("All fields (name, email, password, role) must be provided.", 400);
     }
 
+    // when supperadmin want to create other superadmin
+    if (roleCheck == "superadmin") {
+      // Forbidden
+      throw new ApiError("Can't create other superadmin.", 403);
+    }
+
     // check email is valid & doesn't exist
     await userAuthService.emailValidator(email);
 
+    // superadmin create new admin or member register
+    const newUserData = id ? { name, role } : { name };
+
     // create user
-    const user = await userService.createUser({ name, role });
+    const user = await userService.createUser(newUserData); // if role = undefined -> role = member (defaultValue)
 
     // create user auth
     const newUserAuth = { userId: user.id, email, password };
@@ -120,6 +132,22 @@ async function userRegister(req, res, next) {
       return next(new ApiError(errorMessage[0], 400));
     }
     // Go to error middleware (onError)
+    next(error);
+  }
+}
+
+async function getCurrentUser(req, res, next) {
+  const id = req.user.id;
+  try {
+    const user = await userService.getOne({
+      where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "deletedAt"],
+      },
+    });
+
+    apiSuccess(res, 200, "Successfully get current user", { user });
+  } catch (error) {
     next(error);
   }
 }
@@ -179,4 +207,11 @@ async function generateAccessToken(req, res, next) {
   }
 }
 
-module.exports = { login, logout, userRegister, getAllUserAuth, generateAccessToken };
+module.exports = {
+  login,
+  logout,
+  userRegister,
+  getAllUserAuth,
+  generateAccessToken,
+  getCurrentUser,
+};
