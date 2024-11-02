@@ -1,4 +1,4 @@
-const { Sequelize } = require("../models");
+const { Sequelize, User } = require("../models");
 
 const { carService } = require("../services");
 
@@ -7,7 +7,29 @@ const ApiError = require("../../utils/ApiErrorUtils");
 
 async function getAllCar(req, res, next) {
   try {
-    const cars = await carService.getAll();
+    const cars = await carService.getAll({
+      paranoid: false,
+      attributes: {
+        exclude: ["createdBy", "updatedBy", "deletedBy"],
+      },
+      include: [
+        {
+          model: User,
+          as: "created_by",
+          attributes: ["id", "name", "role"],
+        },
+        {
+          model: User,
+          as: "updated_by",
+          attributes: ["id", "name", "role"],
+        },
+        {
+          model: User,
+          as: "deleted_by",
+          attributes: ["id", "name", "role"],
+        },
+      ],
+    });
 
     apiSuccess(res, 200, "Successfully get all cars data", { cars });
   } catch (error) {
@@ -53,7 +75,17 @@ async function updateCarData(req, res, next) {
     };
 
     // Update database
-    const updatedCar = await carService.updateCar(updatedData, { where: { id } });
+    const updatedCar = await carService.updateCar(updatedData, {
+      where: {
+        id,
+      },
+      attributes: ["id", "name", "model", "year", "size"],
+      include: {
+        model: User,
+        as: "updated_by",
+        attributes: ["id", "name", "role"],
+      },
+    });
 
     apiSuccess(res, 200, "Successfully updated car data", { updatedCar });
   } catch (error) {
@@ -74,6 +106,12 @@ async function deleteCarData(req, res, next) {
       {
         where: {
           id,
+        },
+        attributes: ["id", "name", "model", "year", "size"],
+        include: {
+          model: User,
+          as: "deleted_by",
+          attributes: ["id", "name", "role"],
         },
       },
       userId // deletedBy

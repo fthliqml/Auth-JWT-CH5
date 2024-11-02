@@ -2,13 +2,9 @@ const { userService } = require("../services");
 const apiSuccess = require("../../utils/apiSuccess");
 
 async function getAllUser(req, res, next) {
-  const { active } = req.query;
-  const userCondition = { paranoid: true };
-
-  if (active == "false") userCondition.paranoid = false; // when paranoid = false -> get soft deleted data too
-
   try {
-    const users = await userService.getAll(userCondition);
+    // get deleted users too
+    const users = await userService.getAll({ paranoid: false });
 
     // response success
     apiSuccess(res, 200, "Successfully get all users data", { users });

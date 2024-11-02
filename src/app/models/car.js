@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'createdBy'
       Car.belongsTo(models.User, {
         foreignKey: "createdBy",
+        as: "created_by",
         onDelete: "SET NULL", // does not work, it should define in migrations
         onUpdate: "CASCADE", // does not work, it should define in migrations
       });
@@ -20,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'updatedBy'
       Car.belongsTo(models.User, {
         foreignKey: "updatedBy",
+        as: "updated_by",
         onDelete: "SET NULL", // does not work, it should define in migrations
         onUpdate: "CASCADE", // does not work, it should define in migrations
       });
@@ -27,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       // Asosiasi dengan User untuk 'deletedBy'
       Car.belongsTo(models.User, {
         foreignKey: "deletedBy",
+        as: "deleted_by",
         onDelete: "SET NULL", // does not work, it should define in migrations
         onUpdate: "CASCADE", // does not work, it should define in migrations
       });

@@ -33,7 +33,7 @@ const softDelete = async (condition, deletedBy) => {
   await carRepository.deleteCar(condition);
 
   // return deleted data
-  return getOne({ where: condition.where, paranoid: false });
+  return getOne({ ...condition, paranoid: false }); // combining condition with paranoid: false
 };
 
 module.exports = { getAll, getOne, createCar, updateCar, softDelete };
