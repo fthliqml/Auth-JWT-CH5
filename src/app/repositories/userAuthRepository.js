@@ -1,7 +1,7 @@
 const { UserAuth } = require("../models");
 
-const getAll = () => {
-  return UserAuth.findAll();
+const getAll = (condition) => {
+  return UserAuth.findAll(condition);
 };
 
 const createUserAuth = (newUserAuth) => {

@@ -8,9 +8,9 @@ const ApiError = require("../../utils/ApiErrorUtils");
 async function getAllCar(req, res, next) {
   try {
     const cars = await carService.getAll({
-      paranoid: false,
+      order: [["id", "ASC"]],
       attributes: {
-        exclude: ["createdBy", "updatedBy", "deletedBy"],
+        exclude: ["createdBy", "updatedBy", "deletedBy", "deletedAt"],
       },
       include: [
         {

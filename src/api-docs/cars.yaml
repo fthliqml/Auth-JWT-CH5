@@ -1,0 +1,176 @@
+paths:
+  /api/v1/cars:
+    get:
+      tags:
+        - Car
+      summary: Get all cars
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/Car" # Items will represented type object per item as the definition in components
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+    post:
+      tags:
+        - Car
+      summary: Create new car data
+      description: Requires admin or superadmin role
+      requestBody:
+        description: Car property
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarProperty"
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/Car" # Items will represented type object per item as the definition in components
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+        404:
+          description: Can't find specific data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotFoundError"
+  /api/v1/cars/{carId}:
+    delete:
+      tags:
+        - Car
+      summary: Delete a single car data
+      description: Requires admin or superadmin role
+      parameters:
+        - name: carId
+          in: path
+          description: Car data id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/Car" # Items will represented type object per item as the definition in components
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+        404:
+          description: Can't find specific data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotFoundError"
+    patch:
+      tags:
+        - Car
+      summary: Update an existing car data
+      description: Requires admin or superadmin role
+      parameters:
+        - name: carId
+          in: path
+          description: Car data id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated car data
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarProperty"
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/Car" # Items will represented type object per item as the definition in components
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+        404:
+          description: Can't find specific data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotFoundError"

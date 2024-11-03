@@ -4,16 +4,13 @@ const jwt = require("jsonwebtoken");
 
 const ApiError = require("../../utils/ApiErrorUtils");
 
-function getAll() {
-  return userAuthRepository.getAll();
+function getAll(condition) {
+  return userAuthRepository.getAll(condition);
 }
 
 const getOne = async (condition) => {
   const userAuth = await userAuthRepository.getOne(condition);
-  if (!userAuth) {
-    // resource not found
-    throw new ApiError("Can't find userAuth's specific data", 404);
-  }
+
   return userAuth;
 };
 

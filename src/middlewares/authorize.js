@@ -6,7 +6,7 @@ module.exports = async function authorize(req, res, next) {
     const bearerToken = req.headers.authorization;
     if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
       // Unauthorized
-      throw new ApiError("Token is missing or malformatted !", 401);
+      throw new ApiError("Token is missing, malformatted, or expired", 401);
     }
 
     const token = bearerToken.split("Bearer ")[1];
@@ -15,7 +15,7 @@ module.exports = async function authorize(req, res, next) {
 
     if (!userPayload) {
       // Unauthorized
-      throw new ApiError("AccessToken is expired", 401);
+      throw new ApiError("Token is missing, malformatted, or expired", 401);
     }
 
     req.user = userPayload;

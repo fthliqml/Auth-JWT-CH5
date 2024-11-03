@@ -1,0 +1,240 @@
+openapi: "3.0.3"
+info:
+  title: "CRUD Cars Data With Oauth"
+  version: "1.0.0"
+  description: "API documentation"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RoleUnauthorizedError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Failed"
+        message:
+          type: string
+          example: "Role is unauthorized !"
+        isSuccess:
+          type: boolean
+          example: false
+        data:
+          type: object
+          nullable: true
+          example: null
+    NotFoundError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Failed"
+        message:
+          type: string
+          example: "Can't find specific data"
+        isSuccess:
+          type: boolean
+          example: false
+        data:
+          type: object
+          nullable: true
+          example: null
+    TokenError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Failed"
+        message:
+          type: string
+          example: "Token is missing, malformatted, or expired"
+        isSuccess:
+          type: boolean
+          example: false
+        data:
+          type: object
+          nullable: true
+          example: null
+    Car:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Success"
+        message:
+          type: string
+          example: "Successfully get all cars data"
+        isSuccess:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            cars:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Toyota Innova Zenix"
+                  model:
+                    type: string
+                    example: "Sedan"
+                  year:
+                    type: integer
+                    example: 2020
+                  size:
+                    type: string
+                    example: "medium"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-29T22:25:25.324Z"
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-29T22:25:25.324Z"
+                  created_by:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 2
+                      name:
+                        type: string
+                        example: "Oktavia Fendi"
+                      role:
+                        type: string
+                        example: "admin"
+                  updated_by:
+                    type: object
+                    nullable: true
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Muhammad Fatihul Iqmal"
+                      role:
+                        type: string
+                        example: "superadmin"
+                  deleted_by:
+                    type: object
+                    nullable: true
+                    properties:
+                      id:
+                        type: integer
+                        example: null
+                      name:
+                        type: string
+                        example: null
+                      role:
+                        type: string
+                        example: null
+    CarProperty:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Toyota Innova Zenix"
+        model:
+          type: string
+          example: "Sedan"
+        year:
+          type: integer
+          example: 2020
+        size:
+          type: string
+          example: "medium"
+    Login:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Success"
+        message:
+          type: string
+          example: "Authorized."
+        isSuccess:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            user:
+              type: array
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: Muhammad Fatihul Iqmal
+                  email:
+                    type: string
+                    example: iqmal.example@example.com
+                  role:
+                    type: string
+                    example: superadmin
+                  status:
+                    type: string
+                    example: active
+    UserAuth:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "Success"
+        message:
+          type: string
+          example: "Successfully get all user auth data"
+        isSuccess:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            user:
+              type: array
+              items:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    format: email
+                    example: iqmal.example@example.com
+                  password:
+                    type: string
+                    format: password
+                    example: $2b$10$/AN5ic4qmtVdQrw1F0xBh.p5lxGXKjQKarMLtG9z2KxCk9XlAxRGO
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InN1cGVyYWRtaW4iLCJpYXQiOjE3MzA2NzM1ODYsImV4cCI6MTczMDY3NzE4Nn0.v1JSS8dVwyJTc1OYY5LvUNT56cKaO9Ryp42eThYIt1E
+                  createdAt:
+                    type: datetime
+                    example: 2024-10-29T22:25:25.319Z
+                  updatedAt:
+                    type: datetime
+                    example: 2024-10-29T22:25:25.319Z
+tags:
+  - name: "Car"
+    description: "Operations related to CRUD cars data"
+  - name: "Auth"
+    description: "Operations related to user authentication"
+  - name: "Admin"
+    description: "Operations related to admin and superadmin actions"
+servers:
+  - url: "http://localhost:3000"

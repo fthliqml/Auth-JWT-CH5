@@ -1,0 +1,215 @@
+paths:
+  /api/v1/admin/auth:
+    get:
+      tags:
+        - Admin
+      summary: Get all user's auth information
+      description: Requires superadmin role
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array # Indicates that this schema is an array
+                items:
+                  $ref: "#/components/schemas/UserAuth" # Items will represented type object per item as the definition in components
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+  /api/v1/admin/auth/register:
+    post:
+      tags:
+        - Admin
+      summary: Create new admin
+      description: Requires superadmin role
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: User data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Oktavia Fendi"
+                email:
+                  type: string
+                  format: email
+                  example: "okta.example@mail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "your_secure_password"
+              required:
+                - email
+                - password
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Success"
+                  message:
+                    type: string
+                    example: "Successfully registered."
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "Oktavia Fendi"
+                          email:
+                            type: string
+                            example: "okta.example@mail.com"
+                          role:
+                            type: string
+                            example: "admin"
+                          status:
+                            type: string
+                            example: "active"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+        400:
+          description: Bad request - Email already registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "Email already in use."
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/admin/auth/{userId}:
+    delete:
+      tags:
+        - Admin
+      summary: Delete user
+      description: Requires superadmin role
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: user data id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Success"
+                  message:
+                    type: string
+                    example: "Successfully get all user auth data"
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: Aldes Assegaf
+                            role:
+                              type: string
+                              example: admin
+                            status:
+                              type: string
+                              example: deleted
+                            createdAt:
+                              type: datetime
+                              example: 2024-10-29T22:25:25.319Z
+                            updatedAt:
+                              type: datetime
+                              example: 2024-10-29T22:25:25.319Z
+                            deletedAt:
+                              type: datetime
+                              example: 2024-10-29T22:25:25.319Z
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+        403:
+          description: Forbidden - Role is unauthorized
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleUnauthorizedError"
+        404:
+          description: Can't find specific data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotFoundError"

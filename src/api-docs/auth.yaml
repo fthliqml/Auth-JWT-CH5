@@ -1,0 +1,276 @@
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: User authentication
+      requestBody:
+        description: User credentials
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "iqmal.example@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "your_secure_password"
+              required:
+                - email
+                - password
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Login"
+        404:
+          description: Email Not Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "Email not registered"
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        401:
+          description: Incorrect Password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "Incorrect password !"
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register as a member
+      requestBody:
+        description: User data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Muhammad Fatihul Iqmal"
+                email:
+                  type: string
+                  format: email
+                  example: "iqmal.example@mail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "your_secure_password"
+              required:
+                - email
+                - password
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Auth"
+        400:
+          description: Bad request - Email already registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "Email already in use."
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+  /api/v1/auth/current-user:
+    get:
+      tags:
+        - Auth
+      summary: Get current user data
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Success"
+                  message:
+                    type: string
+                    example: "Successfully get current user data"
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "Muhammad Fatihul Iqmal"
+                          role:
+                            type: string
+                            example: "superadmin"
+                          status:
+                            type: string
+                            example: "active"
+        401:
+          description: Unauthorized access - Token is missing, malformatted, or expired
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TokenError"
+  /api/v1/auth/refresh-token:
+    get:
+      tags:
+        - Auth
+      summary: Generate new access token
+      description: This endpoint is used to get new access token for current user. It will check user cookies and check user's refresh token, if user's refresh token is not expired yet, then API will response success
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Success"
+                  message:
+                    type: string
+                    example: "Successfully get new access token"
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMwMzM1MzkzLCJleHAiOjE3MzAzMzg5OTN9.wsXQTM_7N7O_AkQVWfkpnsaifcgobTqLv52hyCMMdq8"
+        401:
+          description: Session Over
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "Session is over, please login again."
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Success"
+                  message:
+                    type: string
+                    example: "Successfully logout."
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Failed"
+                  message:
+                    type: string
+                    example: "You're not authorized. Please login"
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  data:
+                    type: object
+                    nullable: true
+                    example: null

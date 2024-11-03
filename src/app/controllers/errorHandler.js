@@ -15,7 +15,7 @@ function onError(error, req, res, next) {
   if (error instanceof ApiError) {
     return res.status(statusCode).json({
       status: "Failed",
-      error: error.message,
+      message: error.message,
       isSuccess: false,
       data: null,
     });
@@ -23,7 +23,7 @@ function onError(error, req, res, next) {
 
   res.status(500).json({
     status: "Failed",
-    error: error.message || "An unexpected error occurred",
+    message: error.message || "An unexpected error occurred",
     isSuccess: false,
     data: null,
   });
