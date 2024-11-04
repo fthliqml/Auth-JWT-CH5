@@ -49,7 +49,6 @@ This project follows a **service-repository pattern** as below:
 │   │   ├── services/
 │   │   ├── middlewares/
 │   │   ├── routes/
-│   │   └── index.js
 │   ├── config/
 │   │   ├── database/
 │   │   ├── routes/
