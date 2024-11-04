@@ -1,3 +1,0 @@
-repositories -> interaksi dengan model secara langsung (abstraksi query kedalam database)
-service -> logika bisnis dalam app
-controller -> menerima request, memanggil service, dan memberikan response
