@@ -2,11 +2,18 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const cors = require("cors");
 const expressLayouts = require("express-ejs-layouts");
 const router = require("../config/routes");
 // const session = require("express-session");
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 // Reading static files in specific folder
 app.use(express.static(__dirname + "/../public"));
