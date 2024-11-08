@@ -15,6 +15,9 @@ This project provides an API for managing car data, user authorization (includin
 
 The project separates user-related models into **User** (fields: `name`, `role`, `status`) and **UserAuth** (`email`, `password`, `refreshToken`) to enhance organization and security.
 
+## 📨 Entity Relationship Diagram
+![ERD](https://github.com/user-attachments/assets/b153ff83-f5be-40f2-b81f-55475c9aa9d4)
+
 ## 🌟 Features
 
 This API incorporates role-based access control to ensure that only authorized users can perform certain actions. Below are the access permissions by role:
