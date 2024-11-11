@@ -44,15 +44,22 @@ async function login(req, res, next) {
     };
 
     // Create & save refresh token to database
-    const refreshToken = await userAuthService.createRefreshToken(payload, { where: { email } });
+    const refreshToken = await userAuthService.createRefreshToken(payload, {
+      where: { email },
+    });
 
     // Generate access token
-    const accessToken = userAuthService.createAccessToken(payload, refreshToken);
+    const accessToken = userAuthService.createAccessToken(
+      payload,
+      refreshToken
+    );
 
     // Send accessToken to http only cookie
     res.cookie("accessToken", accessToken, {
       maxAge: process.env.COOKIE_EXP,
       httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
     });
 
     apiSuccess(res, 200, "Authorized.", {
@@ -76,7 +83,10 @@ async function logout(req, res, next) {
       throw new ApiError("You are not authorized. Please login", 401);
     }
     // set refresh token to null
-    await userAuthService.updateUserAuth({ refreshToken: null }, { where: { id: userInfo.id } });
+    await userAuthService.updateUserAuth(
+      { refreshToken: null },
+      { where: { id: userInfo.id } }
+    );
     res.clearCookie("accessToken");
     apiSuccess(res, 200, "Successfully logout.", null);
   } catch (error) {
@@ -92,7 +102,10 @@ async function userRegister(req, res, next) {
 
     if (!name || !email || !password) {
       // Bad request
-      throw new ApiError("All fields (name, email, password, role) must be provided.", 400);
+      throw new ApiError(
+        "All fields (name, email, password, role) must be provided.",
+        400
+      );
     }
 
     // check email is valid & doesn't exist
@@ -106,7 +119,9 @@ async function userRegister(req, res, next) {
 
     // create user auth
     const newUserAuth = { userId: user.id, email, password };
-    newUserAuth.password = await userAuthService.encryptPassword(newUserAuth.password);
+    newUserAuth.password = await userAuthService.encryptPassword(
+      newUserAuth.password
+    );
     const userAuth = await userAuthService.createUserAuth(newUserAuth);
 
     // response success

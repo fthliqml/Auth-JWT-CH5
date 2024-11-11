@@ -4,6 +4,10 @@ const getAll = (condition) => {
   return Car.findAll(condition);
 };
 
+const count = (condition) => {
+  return Car.count(condition);
+};
+
 const getOne = (condition) => {
   return Car.findOne(condition);
 };
@@ -20,4 +24,4 @@ const updateCar = (updatedData, condition) => {
   return Car.update(updatedData, condition);
 };
 
-module.exports = { getAll, getOne, createCar, deleteCar, updateCar };
+module.exports = { getAll, getOne, createCar, deleteCar, updateCar, count };

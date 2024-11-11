@@ -6,8 +6,16 @@ const apiSuccess = require("../../utils/apiSuccess");
 const ApiError = require("../../utils/ApiErrorUtils");
 
 async function getAllCar(req, res, next) {
+  const page = req.query.page || 1;
   try {
+    const limit = 12;
+    const offset = (page - 1) * limit;
+
+    const totalData = await carService.count();
+
     const cars = await carService.getAll({
+      limit,
+      offset,
       order: [["id", "ASC"]],
       attributes: {
         exclude: ["createdBy", "updatedBy", "deletedBy", "deletedAt"],
@@ -31,7 +39,10 @@ async function getAllCar(req, res, next) {
       ],
     });
 
-    apiSuccess(res, 200, "Successfully get all cars data", { cars });
+    apiSuccess(res, 200, "Successfully get all cars data", {
+      totalData,
+      cars,
+    });
   } catch (error) {
     next(error);
   }
@@ -43,10 +54,19 @@ async function createNewCar(req, res, next) {
   try {
     if (!name || !model || !year || !size) {
       // bad request
-      throw new ApiError("All fields (name, model, year. size) must be provided !", 400);
+      throw new ApiError(
+        "All fields (name, model, year. size) must be provided !",
+        400
+      );
     }
 
-    const newCar = await carService.createCar({ name, model, year, size, createdBy: userId });
+    const newCar = await carService.createCar({
+      name,
+      model,
+      year,
+      size,
+      createdBy: userId,
+    });
 
     apiSuccess(res, 201, "Successfully created new car data", { car: newCar });
   } catch (error) {

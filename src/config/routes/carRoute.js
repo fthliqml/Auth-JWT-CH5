@@ -5,7 +5,7 @@ const { carController } = require("../../app/controllers");
 const authorize = require("../../middlewares/authorize");
 const roleCheck = require("../../middlewares/roleCheck");
 
-router.get("/cars", carController.getAllCar);
+router.get("/cars", authorize, carController.getAllCar);
 router.post(
   "/cars",
   authorize,

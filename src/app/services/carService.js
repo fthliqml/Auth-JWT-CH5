@@ -5,6 +5,10 @@ const getAll = (condition = {}) => {
   return carRepository.getAll(condition);
 };
 
+const count = (condition = {}) => {
+  return carRepository.count(condition);
+};
+
 const getOne = async (condition) => {
   const car = await carRepository.getOne(condition);
   if (!car) {
@@ -36,4 +40,4 @@ const softDelete = async (condition, deletedBy) => {
   return getOne({ ...condition, paranoid: false }); // combining condition with paranoid: false
 };
 
-module.exports = { getAll, getOne, createCar, updateCar, softDelete };
+module.exports = { getAll, getOne, createCar, updateCar, softDelete, count };
