@@ -56,7 +56,6 @@ async function login(req, res, next) {
 
     // Send accessToken to http only cookie
     res.cookie("accessToken", accessToken, {
-      maxAge: process.env.COOKIE_EXP,
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
