@@ -35,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      image: {
+        type: DataTypes.STRING,
+      },
       status: {
         type: DataTypes.ENUM("active", "deleted"),
         validate: {

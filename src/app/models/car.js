@@ -77,6 +77,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      image: {
+        type: DataTypes.STRING,
+      },
       createdBy: {
         allowNull: false,
         type: DataTypes.INTEGER,

@@ -38,21 +38,18 @@ async function login(req, res, next) {
     // Token payload
     const payload = {
       id: user.id,
-      // name: user.name,
-      // email: userAuth.email,
+      name: user.name,
+      email: userAuth.email,
       role: user.role,
     };
 
     // Create & save refresh token to database
-    const refreshToken = await userAuthService.createRefreshToken(payload, {
+    await userAuthService.createRefreshToken(payload, {
       where: { email },
     });
 
     // Generate access token
-    const accessToken = userAuthService.createAccessToken(
-      payload,
-      refreshToken
-    );
+    const accessToken = userAuthService.createAccessToken(payload);
 
     // Send accessToken to http only cookie
     res.cookie("accessToken", accessToken, {
@@ -210,11 +207,18 @@ async function generateAccessToken(req, res, next) {
 
     const payload = {
       id: user.id,
-      // name: user.name,
+      name: user.name,
+      email: user.email,
       role: user.role,
     };
 
     const token = userAuthService.createAccessToken(payload);
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    });
 
     // response success
     apiSuccess(res, 200, "Successfully get new access token", { token });

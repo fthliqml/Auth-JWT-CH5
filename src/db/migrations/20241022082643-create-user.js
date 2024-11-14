@@ -17,6 +17,11 @@ module.exports = {
         type: Sequelize.ENUM("superadmin", "admin", "member"),
         defaultValue: "member",
       },
+      image: {
+        type: Sequelize.STRING,
+        defaultValue:
+          "https://ik.imagekit.io/iqmal/img_photo_3.png?updatedAt=1731567690615",
+      },
       status: {
         type: Sequelize.ENUM("active", "deleted"),
         defaultValue: "active",
@@ -40,7 +45,11 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Users");
     // delete enum type
-    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_role";');
-    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_status";');
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Users_role";'
+    );
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Users_status";'
+    );
   },
 };

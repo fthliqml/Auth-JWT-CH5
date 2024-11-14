@@ -25,6 +25,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.ENUM("small", "medium", "large"),
       },
+      image: {
+        type: Sequelize.STRING,
+        defaultValue:
+          "https://ik.imagekit.io/iqmal/image-car24_yZcqZpQkk.jpg?updatedAt=1729091058985",
+      },
       createdBy: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -72,6 +77,8 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Cars");
-    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Cars_size";');
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Cars_size";'
+    );
   },
 };
