@@ -6,11 +6,8 @@ const apiSuccess = require("../../utils/apiSuccess");
 const ApiError = require("../../utils/ApiErrorUtils");
 
 async function getAllCar(req, res, next) {
-  const page = req.query.page || 1;
+  const { limit = 12, offset = 0 } = req.query;
   try {
-    const limit = 12;
-    const offset = (page - 1) * limit;
-
     const totalData = await carService.count();
 
     const cars = await carService.getAll({
