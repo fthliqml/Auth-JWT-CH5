@@ -144,19 +144,30 @@ async function userRegister(req, res, next) {
 async function getCurrentUser(req, res, next) {
   const id = req.user.id;
   try {
-    const user = await userService.getOne({
+    const userAuth = await userAuthService.getOne({
       where: { id },
-      attributes: {
-        exclude: ["createdAt", "updatedAt", "deletedAt"],
+      attributes: ["id", "email"],
+      include: {
+        model: User,
+        as: "user",
+        attributes: ["name", "role", "image"],
       },
     });
 
-    if (!user) {
+    if (!userAuth) {
       // resource not found
       throw new ApiError("Can't find user's data !", 404);
     }
 
-    apiSuccess(res, 200, "Successfully get current user", { user });
+    const currUser = {
+      id: userAuth.id,
+      email: userAuth.email,
+      name: userAuth.user.name,
+      image: userAuth.user.image,
+      role: userAuth.user.role,
+    };
+
+    apiSuccess(res, 200, "Successfully get current user", { user: currUser });
   } catch (error) {
     next(error);
   }

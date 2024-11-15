@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const methodOverride = require("method-override");
 const cors = require("cors");
 const router = require("../config/routes");
 
@@ -21,6 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Install Cookie Parser
 app.use(cookieParser());
+// POST override example -> /resource?_method=DELETE
+app.use(methodOverride("_method"));
 
 // Routing
 app.use(router);

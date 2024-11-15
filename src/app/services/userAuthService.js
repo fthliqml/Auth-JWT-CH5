@@ -60,7 +60,7 @@ async function emailValidator(email) {
   const authIsExisting = await userAuthRepository.getOne({ where: { email } });
   if (authIsExisting) {
     // Bad request
-    throw new ApiError("Email already in use.", 400);
+    throw new ApiError("Email already registered.", 400);
   }
 }
 
