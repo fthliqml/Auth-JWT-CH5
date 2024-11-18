@@ -7,6 +7,15 @@ const authRoute = require("./authRoute");
 const carRoute = require("./carRoute");
 const adminRoute = require("./adminRoute");
 
+router.get("/health-check", (req, res) => {
+  res.status(200).json({
+    status: "Success",
+    message: "Successfully health checking",
+    isSuccess: true,
+    data: null,
+  });
+});
+
 // API documentation
 router.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 router.use("/api/v1", authRoute);
