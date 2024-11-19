@@ -54,8 +54,8 @@ async function login(req, res, next) {
     // Send accessToken to http only cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV,
+      sameSite: "None",
     });
 
     apiSuccess(res, 200, "Authorized.", {
@@ -67,6 +67,7 @@ async function login(req, res, next) {
       },
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }
@@ -83,7 +84,11 @@ async function logout(req, res, next) {
       { refreshToken: null },
       { where: { id: userInfo.id } }
     );
-    res.clearCookie("accessToken");
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV,
+      sameSite: "None",
+    });
     apiSuccess(res, 200, "Successfully logout.", null);
   } catch (error) {
     next(error);
@@ -227,8 +232,8 @@ async function generateAccessToken(req, res, next) {
 
     res.cookie("accessToken", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV,
+      sameSite: "None",
     });
 
     // response success
